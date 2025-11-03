@@ -19,8 +19,8 @@
 #
 # Pré-requisitos:
 # - Os dados devem estar em um arquivo em formato .csv
-# - A identificação das sequências deve estar em coluna nomeada como ID
-# - As sequências devem estar em coluna nomeada como Sequencia
+# - A identificação das sequências deve estar em coluna nomeada como "ID"
+# - As sequências devem estar em coluna nomeada como "Sequencia"
 # - A pasta com o arquivo .csv DEVE estar na mesma pasta onde este R Script está
 # 
 # ------------------------------------------------------------------------------
