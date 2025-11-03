@@ -34,25 +34,30 @@ library(dplyr)
 library(ggplot2)
 
 
-# Alocar o arquivo na pasta onde está salvo 
+# Alocar o arquivo na pasta onde está salvo: 
 
 current_path = getActiveDocumentContext()$path
 setwd(dirname(current_path))
 print(getwd())
 
-# Importar o arquivo .csv, considerando ";" como separadores e "," como símbolo de casa decimal
+# Importar o arquivo .csv, considerando ";" como separadores e "," como símbolo
+# de casa decimal:
 
 sp_massas <- read.csv("sp_massas.csv",, sep=";", dec=",")
+
+# Visualizar o início do arquivo e conferir se os nomes das colunas estão corretos:
+
 head(sp_massas)
 
-# Renomenado coluna com caractere especial (descomente e ajuste, caso necessário)
+# Renomear coluna (descomente e ajuste, caso necessário ajustar nomes de colunas):
+# Verifique os nomes com head()
 
 #sp_massas <- sp_massas %>% 
-#  rename(ID = X..ID)
+#  rename(nome_novo = nome_antigo)
 #head(sp_massas)
 
 
-# Retirando sinal de stop códon das sequências (*):
+# Retirar sinal de stop códon das sequências (*):
 
 sp_massas <- sp_massas %>%
   mutate(sequencia_limpa = sub("\\*$", "", Sequencia))
@@ -73,7 +78,7 @@ sp_massas <- sp_massas %>%
           label = "none",
           aaShift = NULL
         ),
-        0  # arredondamento para 0 casas decimais
+        0  # arredonda para 0 casas decimais
       )
     )
   )
@@ -88,12 +93,14 @@ write.csv(sp_massas, "resultado_com_massa.csv")
 
 
 
-# Agrupando massas em faixas específicas
+### Agrupando massas em faixas específicas ###
 
-# Importar o dado contendo o dado de massa
+# Importar o dado contendo o dado de massa (descomente se o arquivo não estiver
+# carregado:
+
 #read.csv("nomedoarquivo.csv")
 
-
+# Ajuste os agrupamentos a seguir de acordo com a sua necessidade
 # Entre 7 kDa e 11 kDa (não inclui 11k):
 
 btwn_sete_onze <- sp_massas %>%
@@ -124,8 +131,10 @@ btwn_cinq_cem <- sp_massas %>%
 abv_cem <-  sp_massas %>%
   filter(Massa >= 100000)
 
-# Contando linhas de cada agrupamento (quantas observações de transcritos em cada faixa):
-# As somas de transcritos por faixa são atribuídas a variáveis
+# Contando linhas de cada agrupamento (quantas observações de de sequências em
+# cada faixa):
+# As somas de transcritos por faixa são atribuídas a variáveis para inserção no
+# dataframe posteriormente
 
 trnsc_sete_a_onze <- nrow(btwn_sete_onze)
 trnsc_onze_a_quinze <- nrow(btwn_onze_quinze)
@@ -139,7 +148,7 @@ trnsc_acima_cem <- nrow(abv_cem)
 tb_faixas <- tibble(faixa = c("7k - 11k", "11k - 15k", "15k - 20k", "20k - 50k", "50k - 100k", "100k +"),
                     transcritos = c(trnsc_sete_a_onze, trnsc_onze_a_quinze, trsnc_quinze_a_vinte, trnsc_vinte_a_cinq, trnsc_cinq_a_cem, trnsc_acima_cem))
 
-# Transformando as faixas em fatores (números), para ficarem na ordem correta:
+# Transformando as faixas em fatores (números), para obter ordem numérica correta:
 
 tb_faixas <- tb_faixas %>%
   mutate(
@@ -150,20 +159,27 @@ tb_faixas <- tb_faixas %>%
     )
   )
 
-tb_faixas
+tb_faixas # visualizar resultado de tb_faixas
 
-# Histograma com os dados não agrupados em faixas de massas:
+
+### Gerando gráficos ###
+
+# Gerar histograma com os dados não agrupados em faixas de massas:
+# O histograma está agrupando as faixas de 1000 em 1000, caso necessário, ajuste
 
 histogram_graph <- ggplot(sp_massas, aes(x = Massa)) +
   geom_histogram(binwidth = 1000, fill = "salmon", color = "white") +
   labs(x = "Massa (Da)", y = "Frequência") +
   theme_minimal()
 
+# Gerar gráfico de densidade:
 
 density_graph <- ggplot(sp_massas, aes(x = Massa)) +
   geom_density(fill = "skyblue", alpha = 0.5) +
   labs(x = "Massa (Da)", y = "Densidade estimada") +
   theme_minimal()
+
+# Gerar gráfico de barras:
 
 bar_graph <- ggplot(tb_faixas, aes(x = faixa, y = transcritos, fill = faixa)) +
   geom_bar(stat = "identity") +
