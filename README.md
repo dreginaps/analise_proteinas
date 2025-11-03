@@ -1,2 +1,2 @@
 # analise_proteinas
-Scripts para análise de sequências de proteínas em arquivos .fasta
+Scripts para análise de sequências de proteínas em arquivos .fasta e .csv
